@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 11/23/18 16:42:15
+
+if [[ -z $1 ]]
+then
+  echo "Usage: $0 <package.rpm>"
+  exit 1
+fi
+
+rpm2cpio $1 | cpio -idmuv --no-absolute-filenames
+

@@ -1,0 +1,191 @@
+########################################
+# Служба на скрипте
+# Ключевые значения: KillMode, Type
+########################################
+
+[Unit]
+Description=Sber mount extra drives
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/sber-mount-extra-drives.sh
+WorkingDirectory=/usr/bin
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
+
+########################################
+# Чтение вывода команда построчно
+# Ключевое: 
+#  разделитель IFS
+#  временный файловый дескритор куда
+#   складывается вывод команды <()
+#  замена пробел на новую строку
+########################################
+
+while IFS=$'\n' read dev; do
+    echo $dev
+done < <(LANG=C command | tr '[:space:]' '\n')
+
+
+########################################
+# Содержимое переменной как файл на вход
+########################################
+
+# здесь по ходу тоже скрывается значение переменной 
+grep -i "kek" <<< $var
+# вместо echo "$var" | grep "kek"
+
+# здесь точно можно скрыть пароль в ps: будет отобрадаться дескриптор файла
+grep -i "kek" < <(echo $var)
+
+
+########################################
+# Проверки if ... else
+########################################
+
+# Проверка каталога на пустоту
+if [[ -z $(ls -A <dir>) ]]; then
+    echo 'is empty'
+fi
+
+# Проверить выполнение команды
+
+# неправильное использование, результат не тот, на который рассчитываешь
+# изза использования скобок фактически проверка выглядит так: -n ""
+# т.е. проверяется строка на наличие в ней символов, по сути, что кинет команда в стандартный вывод
+# отрицание этого эквивалентно -z
+echo negative
+if [ ! $(echo "$domain" | grep -q "NT SERVICE") ] || [ ! $(echo $user | grep -qiE "[a-z]{3}-(sa|sp)") ]; then
+    echo domain is not NT and user is not CAB
+fi
+
+# тут проверяется код выхода сабшелла, если он не 0, то будет вызван 2й сабшел с командами
+# т.е. работают ленивые вычисления
+echo; echo positive
+if $(echo "$domain" | grep -q "NT SERVICE") || $(echo $user | grep -qiE "[a-z]{3}-(sa|sp)"); then
+    echo domain is NT or user is CAB: pass this shit
+fi
+
+echo; echo negative 2
+if ! $(echo "$domain" | grep -q "NT SERVICE") || ! $(echo $user | grep -qiE "[a-z]{3}-(sa|sp)"); then
+    echo negative 2
+fi
+
+
+########################################
+# Отладка
+########################################
+
+local mode
+if [ ${-/x/} != $- ]; then
+    set +x
+    mode=true
+fi
+
+# код который рабобате без set -x
+
+if "${mode:-false}"; then
+    set -x
+fi
+
+
+########################################
+# Перенаправление 1 и 2 в файл
+########################################
+
+echo kek >& log
+
+
+########################################
+# Циклы
+########################################
+
+# If you want to preserve leading and trailing whitespace in each line,
+# you can set the Internal Field Separator (IFS) to an empty string before the read command:
+IFS= read line
+
+# -r prevents from interpreting \ as special chars
+read -r line
+
+# 'Here string' syntax is usable for small amount of text
+while ... done <<< "$date" 
+
+# Temp file is better
+while ... done < <(echo "$var")
+
+
+########################################
+# Многострочные переменные
+########################################
+
+# сложный вариант
+# плюсы ?
+IFS='' read -r -d '' String <<"EOF"
+<?xml version="1.0" encoding='UTF-8'?>
+ <painting>
+   <img src="madonna.jpg" alt='Foligno Madonna, by Raphael'/>
+   <caption>This is Raphael's "Foligno" Madonna, painted in
+   <date>1511</date>-<date>1512</date>.</caption>
+ </painting>
+EOF
+
+# простой вариант
+
+a="line1
+line2
+line3"
+
+echo "$a" # выведет как есть, 3 строки
+echo $a # склеит все в одну строку
+
+
+########################################
+# Функции
+########################################
+
+# f_some_func RET_VAR
+# Важно чтобы передаваемая в функцию переменная НЕ была объявлена как локальная, иначе последняя строка в функции не отработает, хотя ошибки никакой выведено не будет
+f_some_func() {
+    local return_var
+
+    calculated_value=kek
+
+    declare -g "$return_var=$calculated_value"
+}
+
+f_some_func RET_VAR
+echo "$RET_VAR"
+
+
+########################################
+# Проверка команда на ошибки
+########################################
+
+# Проверка любой команды из серии пайпов
+false | true
+if [ ${PIPESTATUS[0]} -eq 0 ]; then
+    echo
+fi
+
+########################################
+# Получить корректное окончание для числа
+########################################
+
+get_word_ending() {
+
+    local number=$1
+    local word=$2
+    if [[ $number % 10 -eq 1 && $number % 100 -ne 11 ]]; then
+        echo "${word}а" # Окончание для 1
+    elif [[ $number % 10 -ge 2 && $number % 10 -le 4 && ($number % 100 -lt 12 || $number % 100 -gt 14) ]]; then
+        echo "${word}ы" # Окончание для 2-4
+    else
+        echo "${word}ов" # Окончание для остальных
+    fi
+}
+

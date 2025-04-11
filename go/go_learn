@@ -1,0 +1,180 @@
+# база
+
+# объявление переменой 
+
+i := 5
+var i int
+
+# присваивание
+
+i = 5
+
+# простые типы
+
+rune != byte
+rune хранит символ юникода, т.е. может достигать 32 бит
+
+# массивы, срезы, карты
+
+kek := map[string]int{"kek1": 1, "kek2": 2}
+
+# TODO: имитация множеств
+
+# Именованые структуры
+
+# важные ключевые слова: type, struct
+# также важно ставить запятую после каждой строки
+
+type person struct {
+  name string,
+  age int,
+}
+
+# Временные структуры. Для маршалллинга json, для буферов протоколов
+
+var person struct {
+  name string,
+  age int,
+}
+
+# Сравнивать структурные типы через == можно только если у них совпадает порядок, имена и размерность полей
+
+
+# Затенение переменных
+
+    v := 10
+    if ... {
+      fmt.PrintLn(v)
+      v := 5
+      fmt.PrintLn(v)
+    }
+    fmt.PrintLn(v)
+
+    10
+    5
+    10 <- изза оператора :=
+
+
+
+# Затенение переменных
+
+go install .../shadow@latest
+
+
+# Всебщий блок (про видимость переменных)
+
+Не являются ключевыми словами и согут быть затенены: int, string, true, false, make, close, nil
+
+
+# if, else if, else
+
+ n видна только внутри if
+if n := 5; n > 0 {
+ print
+} else if n < 0 {
+ print
+} else {
+ print
+}
+
+# for, while, do while
+# для циклов есть только for
+
+аналог do/while из java:
+
+for {
+ action 
+ if ! cond {
+  break
+ }
+}
+
+# for - range только для встроенных составных типов = массивы, срезы, карты и ?struct на основе них
+
+values := []int{2,3,4}
+for i,v := range values {
+ print i, v
+}
+
+перебор значений карты с выводом значений всегда будет отличаться, сделано намеренно (защита от hash dos)
+
+перебор символов строки идет по rune - особенность цикла for - range. Он умный. И ТОЛЬКО он. Обычный for перебирает byte
+
+# метки циклов
+
+outer:
+ for ...
+   for ...
+     break outer
+
+
+
+# switch
+
+# switch could be empty
+
+    switch size := len(word); {
+    case size > 1:
+        fmt.Println("size > 1 ")
+    case size%2 != 1:
+        fmt.Println("not even")
+    }
+
+# goto
+
+Можно использовать, но редко где может пригодиться
+Пример:
+
+    while true {
+        fmt.Println("kek mek")
+        if true {
+            goto done
+        }
+    }
+    fmt.PrintLn("do something on good exit =)")
+    done:
+    fmt.Println("do clean up anyway")
+
+
+# make
+
+v := make(slice|map|channel, length, capacity)
+
+** length - сколько элементов содержится с структуре
+** capacity - сколько памяти выделено. Если будет превышено в процессе добавления, то будет создана копия структуры с
+capacity * 2 и элементы из структуры 1 будут скопированы в новую структуру
+
+
+# func with variable values
+
+func f4(base int, values ...int) []int {
+    out := make([]int, 0, len(values))
+
+    for _, v := range values {
+        out = append(out, base+v)
+    }
+
+    return out
+}
+
+# Usage
+fmt.Println(f4(1, 0))
+fmt.Println(f4(1, 2))
+fmt.Println(f4(1, 2, 3, 4, 5))
+# BE AWARE OF ... after []int{}... <--
+fmt.Println(f4(1, []int{2,3,4,5}...))
+
+
+# func with multi return values
+
+Всегда надо возвращать столько значений, сколько объявлено в возврате:
+func kek(a, b int) (int, int, error) {}
+-> return 1, 2, nil
+-> return 0, 0, error.New("KEK MEK error")
+
+Можно игнорировать сколько угодно возвращаемых переменных:
+_, retvar, _, _ := func
+
+Если хочется проигнорить все, то просто вызываем фукнцию:
+func
+

@@ -1,0 +1,12 @@
+# Укрощаем shellcheck
+
+vi ~/.vim/bundle/syntastic/syntax_checkers/sh/shellcheck.vim
+
+    " let errorformat =
+    "     \ '%f:%l:%c: %trror: %m,' .
+    "     \ '%f:%l:%c: %tarning: %m,' .
+    "     \ '%f:%l:%c: %tote: %m'
+
+    let errorformat =
+        \ '%f:%l:%c: %trror: %m,'
+

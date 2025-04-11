@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 10/14/18 21:31:04
+
+# Capture output sound and save it to file
+# Be carefull with loudness: check your current settings
+
+if [ -z $1 ]
+then
+	echo "Usage: $0 output.mp3"
+	exit 1
+fi
+
+ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor $1
+

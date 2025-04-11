@@ -1,0 +1,17 @@
+#!/bin/bash
+
+## Raw values
+#ldapsearch -LLL -b "ou=Swemel Group,dc=swemel,dc=grp" -u pahomov -w 0000000 -h 10.1.20.100 dn sn mail | perl -MMIME::Base64 -MEncode=decode -n -00 -e 's/\n +//g;s/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg; binmode(STDOUT, "encoding(UTF-8)");  print'
+
+## work better
+#ldapsearch -LLL -b "dc=swemel,dc=grp" -u pahomov -w 0000000 -h 10.1.20.100 dn sn mail | perl -MMIME::Base64 -MEncode=decode -n -00 -e 's/\n +//g;s/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg; binmode(STDOUT, "encoding(UTF-8)");  print'
+
+# bad
+#ldapsearch -LLL -b "dc=swemel,dc=grp" -u pahomov -w 0000000 -h 10.1.20.100 '(objectclass=*)' | perl -MMIME::Base64 -MEncode=decode -n -00 -e 's/\n +//g;s/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg; binmode(STDOUT, "encoding(UTF-8)");  print'
+
+
+## Address Book =)
+#ldapsearch -LLL -b "dc=swemel,dc=grp" -u pahomov -w 0000000 -h 10.1.20.100 mail | perl -MMIME::Base64 -MEncode=decode -n -00 -e 's/\n +//g;s/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg; binmode(STDOUT, "encoding(UTF-8)"); print' #| awk '{if ($2 ~ "CN=.*") {printf "%s ", $2} else if ($0 ~ "mail: .*") {print $0}}' | grep -i "$1"
+
+ldapsearch -LLL -b "dc=swemel,dc=grp" -u pahomov -w 0000000 -h 10.1.20.100 mail | perl -MMIME::Base64 -MEncode=decode -n -00 -e 's/\n +//g;s/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg; binmode(STDOUT, "encoding(UTF-8)"); print' |  grep -v -E '^SASL.*|^Size limit.*' | grep -iE "$1"
+ 

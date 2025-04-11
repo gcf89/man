@@ -1,0 +1,18 @@
+filetype on
+
+colorscheme industry
+
+set ttyfast
+set hlsearch
+set incsearch
+set nu
+
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+
+set smarttab
+set expandtab
+set smartindent
+
+" команда :retab приведет файл к нормальному виду

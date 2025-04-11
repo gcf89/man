@@ -1,0 +1,13 @@
+yad \
+    --title="Перенос данных" \
+    --window-icon=dialog-error \
+    --image=dialog-error \
+    --width=320 \
+    --height=240 \
+    --fixed \
+    --center \
+    --on-top \
+    --skip-taskbar \
+    --text="<b>Мы перенесли ваши файлы с Windows</b>\n\nНа рабочем столе находится временная папка WINDOWS DATA.\nСкопируйте оттуда нужное перенесите в новую папку в течение Х дней.\nПотом WINDOWS DATA удалится." \
+    --button="Понятно:0" \
+  --button="Удалить временную папку:1"

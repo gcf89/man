@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 28/11/2018 12:30:43
+
+# Отображение основных показателей системы
+# Для пущего эффекта запускать через 'watch -n1 ./sysstat'
+
+
+echo "[System]"
+uptime
+
+_cpu_model=$(egrep "model name" /proc/cpuinfo | uniq | cut -d':' -f 2)
+echo
+echo "[CPU]"
+echo "Model:$_cpu_model"
+
+data=$(egrep 'MHz' /proc/cpuinfo | tr -s '[:blank:]')
+echo $data | awk '
+BEGIN {
+    FS="cpu MHz : "
+}
+{
+    print "CPU1: " $2
+    print "CPU2: " $3
+    print "CPU3: " $4
+    print "CPU4: " $5
+}'
+
+echo
+echo "[RAM]"
+free -h
+
+echo
+echo "[Disk]"
+df -h | head -n1
+df -h | egrep '/$'
+df -h | egrep '/home$'
+
+echo
+echo "[Network]"
+ifstat | head -n3 | tail -n1
+# Get network iface name
+_iface=$(ip link | egrep -v 'lo|br0|vbox' | head -n1 | cut -d":" -f 2)
+ifstat | egrep $_iface -A1

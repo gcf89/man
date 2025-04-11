@@ -1,0 +1,136 @@
+#!/bin/bash
+
+f_default_log_parameters() {
+    case $log_level in
+        TRACE)
+            syslog=""
+            terminal=""
+            prefix_msg="[ $log_level ] "
+            message_color="purple"
+            ;;
+        DEBUG)
+            syslog=""
+            terminal="T"
+            prefix_msg="[ $log_level ] "
+            message_color="purple"
+            ;;
+        INFO)
+            syslog="T"
+            terminal="T"
+            prefix_msg="[ $log_level ] "
+            message_color="white"
+            ;;
+        WARN)
+            syslog="T"
+            terminal="T"
+            prefix_msg="[ $log_level ] "
+            message_color="yellow"
+            ;;
+        ERROR)
+            syslog="T"
+            terminal="T"
+            prefix_msg="[ $log_level ] "
+            message_color="red"
+            ;;
+        FATAL)
+            syslog="T"
+            terminal="T"
+            prefix_msg="[ $log_level ] "
+            message_color="red"
+            ;;
+        *)
+            syslog=""
+            terminal=""
+            prefix_msg="[ INFO ] "
+            message_color="red"
+            ;;
+    esac
+}
+
+#TODO: input validation
+f_parse_log_arguments() {
+
+    local OPTIND o s t l f F e z N
+    while getopts "stl:f:Fez:N" o; do
+        case "${o}" in
+            s) syslog=T ;;
+            t) terminal=T ;;
+            f) touch $OPTARG && log_file="$OPTARG" || log_file="/tmp/temp.log";;
+            z) zenity=T; zenity_percentage="$OPTARG";;
+            F) cfg_log_file=T ;;
+            e) elk=T ;;
+            l) [[ $OPTARG =~ TRACE|DEBUG|INFO|WARN|ERROR|FATAL ]] && log_level="$OPTARG" ;;
+            N) suppress_timestamp=T ;;
+            *) echo "Wrong argument" ;;
+        esac
+    done
+
+}
+
+
+f_log_message() {
+
+    local external_debug
+    if [ ${-/x/} != $- ]; then
+        set +x
+        external_debug=true
+    fi
+
+    local syslog
+    local terminal
+    local log_file
+    local zenity zenity_percentage
+    local cfg_log_file
+    local elk
+    local message_color
+    local suppress_timestamp
+
+    local color_array
+    declare -A color_array
+
+    color_array[red]='\033[0;31m'
+    color_array[green]='\033[0;32m'
+    color_array[yellow]='\033[0;33m'
+    color_array[blue]='\033[0;34m'
+    color_array[purple]='\033[0;35m'
+    color_array[cyan]='\033[0;36m'
+    color_array[grey]='\033[0;37m'
+    color_array[white]='\033[0;38m'
+
+    f_parse_log_arguments ${1+"$@"}
+    f_default_log_parameters
+    f_parse_log_arguments ${1+"$@"}
+
+    while read log_line; do
+        current_time="$(date "+%Y/%m/%d %H:%M:%S")"
+        # -s
+        [ "$syslog" == "T" ] && logger -- "$log_line"
+        # -f
+        [ -n "$log_file" ] && echo "${current_time} $prefix_msg: $log_line" >> $log_file
+        # -F
+        [ "$cfg_log_file" == "T" ] && echo "${current_time} $prefix_msg: $log_line" >> $CFG_LOG_MAIN_LOGFILE
+        # -t -N
+        if [[ "$terminal" == "T" && "$zenity" != "T" ]]; then
+            if [[ "$suppress_timestamp" == "T" ]]; then
+                printf "${color_array[$message_color]}${prefix_msg}${color_array[white]}: ${log_line}\n"
+            else
+                printf "${color_array[$message_color]}${current_time} ${prefix_msg}${color_array[white]}: ${log_line}\n"
+            fi
+        fi
+        # -e
+        [ "$elk" == "T" ] && f_send_to_elk "$log_line"
+        # -z
+        if [ "$zenity" == "T" ]; then
+            echo "$zenity_percentage"
+            echo "# $log_line"
+        fi
+    done
+
+    if "${external_debug:-false}"; then
+        set -x
+    fi
+
+}
+
+# Пример использования
+#(f_main | f_log_message -l TRACE) 2>&1 | f_log_message -l TRACE

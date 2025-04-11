@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Fast switch between frequently used directories
+# Source this file into your .bashrc
+
+# You cannot use it as standalone binary. After calling it
+# as binary subshell will be destroyed and 'cd' will not
+# take effect
+
+function switch-pw
+{
+  declare -a _dirs
+  _dirs[0]="/home/user/data/data/Documents"
+  _dirs[1]="/home/user/data/data/Documents/devel"
+  _dirs[2]="/home/user/data/data/Downloads"
+
+  re_integer="^[0-9]+$"
+
+  echo "Available directories:"
+  for i in $(seq 1 ${#_dirs[@]}); do
+    echo "$i ${_dirs[$(($i-1))]}"
+  done
+
+  while true; do
+    read -p "Choose directory index:" _dirn
+    if ! [[ $_dirn =~ $re_integer ]]; then
+      echo "Error: Entered NaN. To quit press 0"
+    elif [[ $_dirn == 0 ]]; then
+      echo "Bye bye!"
+      return 0
+    elif [[ $_dirn > ${#_dirs[@]} ]]; then
+      echo "Error: index is too big"
+    else
+      cd ${_dirs[$(($_dirn-1))]}
+      return 0
+    fi
+  done
+}
+

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# 2018-10-30_15:43:29 Sergey Pakhomov <pahomov@swemel.ru>
+
+if [ -z "$1" ]
+then
+  echo "Описание:"
+  echo "  Удаляет указанную строку из ~/.ssh/known_hosts"
+  echo "Использование:"
+  echo "  Usage: $0 <line>"
+  exit 1
+fi
+
+sed -i -e "${_line}d" ~/.ssh/known_hosts
+

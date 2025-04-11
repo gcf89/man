@@ -1,0 +1,58 @@
+# simple program
+
+package main
+import "fmt"
+
+# start point: main
+# switch example
+# list example
+
+func main() {
+    words := []string{"a", "bb", "ccc", "dddd"}
+
+    for _, word := range words {
+        switch size := len(word); size {
+        case 1:
+            fmt.Println("one")
+        case 2:
+            fmt.Println("two")
+        case 3:
+            fmt.Println("three")
+        case 4:
+        default:
+            fmt.Println("kek mek")
+        }
+    }
+}
+
+
+# dir structure
+
+main
+    main.go
+db
+    db.go
+config
+    config.go
+
+go.mod
+
+
+# packages
+
+sync?
+метод Once - реализация шаблона Одиночка
+
+go-pg
+работа с субд postgres
+
+
+# source 
+
+import {
+
+"github.com/jinzhu/configor"
+
+}
+
+

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+for f in *.*;do ebook-convert "$f" fb2/"${f%.*}.fb2";done

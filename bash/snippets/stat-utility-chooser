@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 28/11/2018 13:13:54
+
+# Menu driven script to choose favorite monitoring utility
+
+
+_cmd=""
+while true
+do
+    echo "Utility list:"
+    echo " 1. sar"
+    echo " 2. top"
+
+    read -p "Choose:" _utility
+
+    case "$_utility" in
+        "1" | "1." | "sar" )
+        _cmd=/usr/bin/sar
+        break
+        ;;
+
+        "2" | "2." | "top" )
+        _cmd=/usr/bin/top
+        break
+        ;;
+    esac
+done
+
+bash -c $_cmd

@@ -1,0 +1,1 @@
+This repo is intented as a storage for bash common functions and best practices

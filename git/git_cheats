@@ -1,0 +1,6 @@
+Удалить ветку в репозитории
+git push origin --delete branch
+
+Отменить git --amend
+git reset --soft HEAD@{1}
+git commit -C HEAD@{1}

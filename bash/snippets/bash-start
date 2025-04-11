@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 10/30/18 15:51:55
+
+echo "#!/bin/sh"
+echo ""
+echo "# Author: Sergey Pakhomov" 
+echo "# Created: $(date '+%D %T')"
+echo ""
+echo 'if [ -z "$1" ]'
+echo 'then'
+echo '  echo "Описание:"'
+echo '  echo "  Text"'
+echo '  echo "Использование:"'
+echo '  echo "  Usage: $0 <param>"'
+echo '  exit 1'
+echo 'fi'
+echo ""
+

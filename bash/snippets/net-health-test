@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Author: Sergey Pakhomov
+# Created: 28/11/2018 15:21:55
+
+# Простой тест связи с интернет
+
+
+die() {
+    if [[ $? != 0 ]]
+    then
+        echo "ERROR: $*"
+        exit 1
+    fi
+}
+
+ok() {
+    echo "=> OK: $*"
+}
+
+
+ping -c2 8.8.8.8
+[[ $? -eq 0 ]] || die "Cannot ping '8.8.8.8'"
+ok "Ping IP"
+
+_dns_server=$(dig | egrep SERVER | cut -d':' -f 2 | cut -d'#' -f1)
+[[ ! -z $_dns_server ]] || die "No local DNS server found"
+ok "Get local DNS server"
+
+nmap -p 53 $_dns_server | egrep '53/tcp open'
+[[ $? -eq 0 ]] || die "DNS server 53 port is closed"
+ok "Check DNS"
+
+ping -c2 google.com
+[[ $? -eq 0 ]] || die "Cannot ping 'google.com'"
+ok "Ping host"
+
+echo "-= Test finished =-"

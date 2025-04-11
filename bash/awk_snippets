@@ -1,0 +1,4 @@
+# Фильтр по колонке + параметр из bash
+
+kek=python3-asn1crypto
+dpkg -l | awk -v deb=$kek '{if ($2 == deb) {print $2}}'
